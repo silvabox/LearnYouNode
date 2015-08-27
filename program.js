@@ -10,28 +10,27 @@ function collectData(url, callback) {
     });
 
     response.on('end', function() {
-      callback(text)
+      callback(text);
     });
   });
 }
 
-function printFinalResults() { 
-  for (i = 0; i < results.length; i++) {
+function printFinalResults(results) {
+  for (var i = 0; i < results.length; i++) {
     console.log(results[i]);
   }
 };
 
 var urlsArray = process.argv.slice(2);
-var results = [];
 
-function series(url) {
-  if(url) {
-    collectData(url, function(text) {
+function series(array, callback) {
+  var results = [];
+  for (var i = 0; i < array.length; i++) {
+    collectData(array[i], function(text) {
       results.push(text);
-      return series(urlsArray.shift());
+      if (results.length == array.length) callback(results)
     });
-  } else {
-    return printFinalResults();
   }
 }
-series(urlsArray.shift());
+
+series(urlsArray, printFinalResults);
